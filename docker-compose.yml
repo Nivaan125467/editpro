@@ -1,41 +1,19 @@
-version: '3.8'
+version: '3.9'
 
 services:
   backend:
-    image: tiangolo/uvicorn-gunicorn-fastapi:python3.8
-    container_name: fastapi_backend
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/mydatabase
-    depends_on:
-      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: editpro_backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     ports:
-      - '8000:80'
+      - '8000:8000'
     volumes:
-      - ./app:/app
-
-  db:
-    image: postgres:13
-    container_name: postgres_db
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=mydatabase
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:alpine
-    container_name: redis_cache
-
-  frontend:
-    image: node:14
-    container_name: frontend_dev
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-    ports:
-      - '3000:3000'
-    command: npm start
-
-volumes:
-  pg_data:
+      - ./:/app
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
