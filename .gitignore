@@ -1,0 +1,18 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.pdb
+*.egg-info/
+
+# Node
+node_modules/
+
+# General
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.env
+*.log
